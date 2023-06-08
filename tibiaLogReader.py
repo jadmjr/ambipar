@@ -4,11 +4,11 @@ totalDamageTaken = 0
 totalHitpointsHealed = 0
 totalExperienceGained = 0
 unknownOriginDamage = 0
-damageCreatureKind = {}
 blackKnightGains = 0
 blackKnightLoses = 0
 blackKnightHealth = 0
 
+damageCreatureKind = {}
 loot = {}
 output = {
     "hitpointsHealed": 0,
