@@ -3,13 +3,19 @@ import json
 totalDamageTaken = 0
 totalHitpointsHealed = 0
 totalExperienceGained = 0
-creatureKindsDamage = {"unknownOrigin": 0}
+unknownOriginDamage = 0
+damageCreatureKind = {}
+blackKnightGains = 0
+blackKnightLoses = 0
+blackKnightHealth = 0
+
 loot = {}
 output = {
     "hitpointsHealed": 0,
-    "damageTaken": {"total": 0, "byCreatureKind": {}},
-    "experienceGained": 230,
+    "damageTaken": {"total": 0,"unknownOriginDamage":0 , "byCreatureKind": {}},
+    "experienceGained": 0,
     "loot": {},
+    "blackKnightHealth":0
 }
 
 # open the log file
@@ -19,20 +25,25 @@ file = open("tibia_log.txt", "r")
 for line in file:
     if "You lose" in line:
         totalDamageTaken += int(line.split()[3])
-        try:
-            creatureKindsDamage[
-                line.split()[11].replace(".", "").replace("Black", "BlackKnight")
-            ] += int(line.split()[3])
-        except KeyError:
-            creatureKindsDamage.update(
+        pos = int(line.rfind("by a"))
+        if(pos>-1):        
+            creatureKind = line[pos+5:].replace(" ","").replace(".","").replace("\n","")  
+            try:
+                damageCreatureKind[creatureKind] += int(line.split()[3])
+            except KeyError:
+                damageCreatureKind.update(
                 {
-                    line.split()[11]
-                    .replace(".", "")
-                    .replace("Black", "BlackKnight"): int(line.split()[3])
+                    creatureKind: int(line.split()[3])
                 }
             )
-        except IndexError:
-            creatureKindsDamage["unknownOrigin"] += int(line.split()[3])
+            #except IndexError:
+             #   unknownOriginDamage += int(line.split()[3])
+            if("Black Knight" in line):
+                blackKnightGains+=int(line.split()[3])
+        else:
+            unknownOriginDamage += int(line.split()[3])   
+    if "A Black Knight loses" in line:
+        blackKnightLoses+=int(line.split()[5])
 
     if "You healed" in line:
         totalHitpointsHealed += int(line.split()[5])
@@ -109,19 +120,16 @@ for line in file:
             name = ""
             value = 0
 
-#print("totalDamageTaken: " + str(totalDamageTaken))
-#print("creatureKindsDamage: " + str(creatureKindsDamage))
-#print("totalExperienceGained: " + str(totalExperienceGained))
-#print("totalHitpointsHealed: " + str(totalHitpointsHealed))
-#print("loot: " + str(loot))
+blackKnightHealth = blackKnightGains - blackKnightLoses
 
-output["hitpointsHealed"] = str(totalHitpointsHealed)   
-output["damageTaken"]["total"] = str(totalDamageTaken) 
-output["damageTaken"]["byCreatureKind"] = str(creatureKindsDamage)  
-output["experienceGained"] = str(totalExperienceGained)  
-output["loot"] = str(loot)  
-
-#print("output: "+str(output))
+output["hitpointsHealed"] = totalHitpointsHealed
+output["damageTaken"]["total"] = totalDamageTaken
+output["damageTaken"]["unknownOriginDamage"] = unknownOriginDamage
+output["damageTaken"]["byCreatureKind"] = damageCreatureKind
+output["experienceGained"] = totalExperienceGained  
+output["loot"] = loot
+output["blackKnightHealth"] = blackKnightHealth
 
 with open('output.json', 'w') as outfile:
     json.dump(output, outfile)
+
