@@ -48,7 +48,7 @@ for line in file:
     if "You healed" in line:
         totalHitpointsHealed += int(line.split()[5])
 
-    if "You gained" in line:
+    if ("You gained" in line and "experience" in line):
         totalExperienceGained += int(line.split()[3])
 
     if "Loot of" in line and "nothing." not in line:
