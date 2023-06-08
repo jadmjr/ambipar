@@ -18,10 +18,8 @@ output = {
     "blackKnightHealth": 0,
 }
 
-# open the log file
 file = open("tibia_log.txt", "r")
 
-# line interator
 for line in file:
     if "You lose" in line:
         totalDamageTaken += int(line.split()[3])
@@ -34,8 +32,6 @@ for line in file:
                 damageCreatureKind[creatureKind] += int(line.split()[3])
             except KeyError:
                 damageCreatureKind.update({creatureKind: int(line.split()[3])})
-            # except IndexError:
-            #   unknownOriginDamage += int(line.split()[3])
             if "Black Knight" in line:
                 blackKnightGains += int(line.split()[3])
         else:
