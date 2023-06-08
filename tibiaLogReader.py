@@ -12,10 +12,10 @@ blackKnightHealth = 0
 loot = {}
 output = {
     "hitpointsHealed": 0,
-    "damageTaken": {"total": 0,"unknownOriginDamage":0 , "byCreatureKind": {}},
+    "damageTaken": {"total": 0, "unknownOriginDamage": 0, "byCreatureKind": {}},
     "experienceGained": 0,
     "loot": {},
-    "blackKnightHealth":0
+    "blackKnightHealth": 0,
 }
 
 # open the log file
@@ -26,29 +26,27 @@ for line in file:
     if "You lose" in line:
         totalDamageTaken += int(line.split()[3])
         pos = int(line.rfind("by a"))
-        if(pos>-1):        
-            creatureKind = line[pos+5:].replace(" ","").replace(".","").replace("\n","")  
+        if pos > -1:
+            creatureKind = (
+                line[pos + 5 :].replace(" ", "").replace(".", "").replace("\n", "")
+            )
             try:
                 damageCreatureKind[creatureKind] += int(line.split()[3])
             except KeyError:
-                damageCreatureKind.update(
-                {
-                    creatureKind: int(line.split()[3])
-                }
-            )
-            #except IndexError:
-             #   unknownOriginDamage += int(line.split()[3])
-            if("Black Knight" in line):
-                blackKnightGains+=int(line.split()[3])
+                damageCreatureKind.update({creatureKind: int(line.split()[3])})
+            # except IndexError:
+            #   unknownOriginDamage += int(line.split()[3])
+            if "Black Knight" in line:
+                blackKnightGains += int(line.split()[3])
         else:
-            unknownOriginDamage += int(line.split()[3])   
+            unknownOriginDamage += int(line.split()[3])
     if "A Black Knight loses" in line:
-        blackKnightLoses+=int(line.split()[5])
+        blackKnightLoses += int(line.split()[5])
 
     if "You healed" in line:
         totalHitpointsHealed += int(line.split()[5])
 
-    if ("You gained" in line and "experience" in line):
+    if "You gained" in line and "experience" in line:
         totalExperienceGained += int(line.split()[3])
 
     if "Loot of" in line and "nothing." not in line:
@@ -59,12 +57,13 @@ for line in file:
             .replace("\n", "")
             .replace(", ", ",")
             .replace("'s", "")
+            .replace("coins", "coin")            
             .split(",")
         )
 
         for x in objectsLine:
             arrayObjectLine = x.split()
-            arrayObjectLineLength = len(arrayObjectLine)
+            arrayObjectLineLength = len(arrayObjectLine)            
 
             if arrayObjectLineLength == 1:
                 name = arrayObjectLine[0]
@@ -92,8 +91,7 @@ for line in file:
                         value = 1
                         name = (
                             arrayObjectLine[0] + arrayObjectLine[1] + arrayObjectLine[2]
-                        )
-                    name = name.replace("goldcoins", "goldcoin")
+                        )                    
             elif arrayObjectLineLength == 4:
                 if arrayObjectLine[0] == "a":
                     value = 1
@@ -111,8 +109,7 @@ for line in file:
                             + arrayObjectLine[1]
                             + arrayObjectLine[2]
                             + arrayObjectLine[3]
-                        )
-                    name = name.replace("goldcoins", "goldcoin")
+                        )                    
             try:
                 loot[name] += value
             except KeyError:
@@ -126,10 +123,9 @@ output["hitpointsHealed"] = totalHitpointsHealed
 output["damageTaken"]["total"] = totalDamageTaken
 output["damageTaken"]["unknownOriginDamage"] = unknownOriginDamage
 output["damageTaken"]["byCreatureKind"] = damageCreatureKind
-output["experienceGained"] = totalExperienceGained  
+output["experienceGained"] = totalExperienceGained
 output["loot"] = loot
 output["blackKnightHealth"] = blackKnightHealth
 
-with open('output.json', 'w') as outfile:
+with open("output.json", "w") as outfile:
     json.dump(output, outfile)
-
