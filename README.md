@@ -1,7 +1,7 @@
 # ambipar
-Application to parse Tibia Logs
+Application to convert Tibia Logs.txt into a .json file
 
-# notas
-não estamos considerando os subtipos no momento
-diferença entre cyclops e cyclops smith
-diferença entre dragon e dragon lord
+# grades
+Place tibia_log.txt in the root folder.
+Run tibiaLogReader.py
+Output.json will be created in the root folder.
